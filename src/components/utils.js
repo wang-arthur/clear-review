@@ -7,10 +7,12 @@ export function wrap(input, width) {
     if (d !== undefined && Number.isInteger(d.data.name)) return;
     
     let text = d3.select(this);
+    // Create a dummy text plot to handle wrapping
+    // inefficient hack, but fine for small number of text elements
     let textPlot = Plot.text([text.text()], {
       lineWidth: width,
       lineHeight: 1.15,
-    }).plot();
+    }).plot({x: {type: "point"}, y: {type: "point"}}); // set x/y type to point to avoid Observable Plot warnings
     
     // replace text with wrapped text from Plot.text
     let wrappedHTML = d3.select(textPlot).select("g:last-of-type").select("text").html();

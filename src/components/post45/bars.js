@@ -6,16 +6,9 @@
 //  -->
 
 import {palettes, renderPatterns} from "/components/patterns/cheysson.js";
-import {FileAttachment, resize} from "observablehq:stdlib";
+import {resize} from "observablehq:stdlib";
 import * as Plot from "npm:@observablehq/plot";
 import * as d3 from "npm:d3";
-
-// Load article and issue data
-export const articles = (await FileAttachment("/data/articles.json").json());
-var issues_by_name = {};
-for (const a of articles) {
-  if (a["issue"] && !(a["issue"]["name"] in issues_by_name)) issues_by_name[a["issue"]["name"]] = a["issue"];
-}
 
 // Set up palette scheme
 const PALETTES = ["sequential12521025", "grouped12516011"];
@@ -37,14 +30,6 @@ function idFromIssueName(name) {
   const match = name.match(re);
   return match ? match[1] : null;
 }
-
-// we're cherry-picking the solid pattern from sequential12521025 to use for "individual articles"
-const rangeURLs = [
-  palettes[PALETTES[0]].rangeURLs[0],
-  ...PALETTES.slice(1).map(p => palettes[p].rangeURLs).flat(),
-  ...palettes[PALETTES[0]].rangeURLs.slice(1)
-];
-
 
 function articleGrid(as, fill, {width} = {}) {
   var title = "Articles";
@@ -107,20 +92,19 @@ function articleGrid(as, fill, {width} = {}) {
   //   ]
   // });
 }
-// function launchTimeline(data, {width} = {}) {
-//   return Plot.plot({
-//     title: "Launches over the years",
-//     width,
-//     height: 300,
-//     y: {grid: true, label: "Launches"},
-//     color: {...color, legend: true},
-//     marks: [
-//       Plot.rectY(data, Plot.binX({y: "count"}, {x: "date", fill: "state", interval: "year", tip: true})),
-//       Plot.ruleY([0])
-//     ]
-//   });
-// }
-export function articleChart(as) {
+
+export function createBarChart(as) {
+  // we're cherry-picking the solid pattern from sequential12521025 to use for "individual articles"
+  const rangeURLs = [
+    palettes[PALETTES[0]].rangeURLs[0],
+    ...PALETTES.slice(1).map(p => palettes[p].rangeURLs).flat(),
+    ...palettes[PALETTES[0]].rangeURLs.slice(1)
+  ];
+  // var issues_by_name = {};
+  // for (const a of as) {
+  //   if (a["issue"] && !(a["issue"]["name"] in issues_by_name)) issues_by_name[a["issue"]["name"]] = a["issue"];
+  // }
+
   return Plot.plot({
     color: {
       legend: true,
@@ -189,49 +173,49 @@ export function articleChart(as) {
                 //       .classed("card", true)
                 //       .append(() => resize((width) => articleGrid(articles, bar.getAttribute("fill"), width)));
                 // });
-                bars[i].addEventListener("click", (event) => {
-                  const articles = d["articles"];
-                  const bar = event.currentTarget;
-                  const svg = context.ownerSVGElement;
-                  const container = document.querySelector('.card');
+                // bars[i].addEventListener("click", (event) => {
+                //   const articles = d["articles"];
+                //   const bar = event.currentTarget;
+                //   const svg = context.ownerSVGElement;
+                //   const container = document.querySelector('.card');
                 
-                  // Create a new container for the expanded rectangle
-                  const backgroundContainer = d3.select(container)
-                    .append("div")
-                    .classed("background-container", true)
-                    .style("position", "absolute")
-                    .style("top", 0)
-                    .style("left", 0)
-                    .style("width", "100%")
-                    .style("height", "100%")
-                    .style("z-index", -1);
+                //   // Create a new container for the expanded rectangle
+                //   const backgroundContainer = d3.select(container)
+                //     .append("div")
+                //     .classed("background-container", true)
+                //     .style("position", "absolute")
+                //     .style("top", 0)
+                //     .style("left", 0)
+                //     .style("width", "100%")
+                //     .style("height", "100%")
+                //     .style("z-index", -1);
                 
-                  // Expand the clicked rectangle to fill the whole container
-                  const rect = d3.select(bar);
-                  rect.transition()
-                      .duration(500)
-                      .attr("x", 0)
-                      .attr("y", 0)
-                      .attr("width", container.clientWidth)
-                      .attr("height", container.clientHeight)
-                      .on("end", () => {
-                        // Move the expanded rectangle to the new container
-                        backgroundContainer.node().appendChild(bar);
+                //   // Expand the clicked rectangle to fill the whole container
+                //   const rect = d3.select(bar);
+                //   rect.transition()
+                //       .duration(500)
+                //       .attr("x", 0)
+                //       .attr("y", 0)
+                //       .attr("width", container.clientWidth)
+                //       .attr("height", container.clientHeight)
+                //       .on("end", () => {
+                //         // Move the expanded rectangle to the new container
+                //         backgroundContainer.node().appendChild(bar);
                 
-                        // Clear the original container and add the new visualization
-                        d3.select(container).selectAll("*:not(div.background-container)").remove();
+                //         // Clear the original container and add the new visualization
+                //         d3.select(container).selectAll("*:not(div.background-container)").remove();
                 
-                        const card = d3.select(container)
-                            .append("div")
-                            .classed("card", true)
-                            .style("position", "absolute")
-                            .style("top", 0)
-                            .style("left", 0)
-                            .style("width", "100%")
-                            .style("height", "100%")
-                            .append(() => resize((width) => articleGrid(articles, bar.getAttribute("fill"), width)));
-                      });
-                });
+                //         const card = d3.select(container)
+                //             .append("div")
+                //             .classed("card", true)
+                //             .style("position", "absolute")
+                //             .style("top", 0)
+                //             .style("left", 0)
+                //             .style("width", "100%")
+                //             .style("height", "100%")
+                //             .append(() => resize((width) => articleGrid(articles, bar.getAttribute("fill"), width)));
+                //       });
+                // });
               }
               return g;
             }

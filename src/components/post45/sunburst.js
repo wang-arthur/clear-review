@@ -18,14 +18,12 @@ Check https://observablehq.com/@kerryrodden/sequences-sunburst
 
 Possible with Observable Plot? https://github.com/observablehq/plot/issues/133
 */
-
-import {FileAttachment} from "observablehq:stdlib";
 import * as d3 from "npm:d3";
 import {palettes, renderPatterns} from "/components/patterns/cheysson.js";
 import {wrap} from "/components/utils.js";
 
-const newWindowIcon = FileAttachment("/images/noun-new-window-2440242.svg").image({width: 15, height: 15});
-const newWindowIconURL = await FileAttachment("/images/noun-new-window-2440242.svg").url();
+// const newWindowIcon = FileAttachment("/images/noun-new-window-2440242.svg").image({width: 15, height: 15});
+// const newWindowIconURL = await FileAttachment("/images/noun-new-window-2440242.svg").url();
 
 function toMarkdown(text) {
   return text.replace(/<i>(.*?)<\/i>/g, (match, p1) => {
@@ -43,31 +41,28 @@ function articleCount(node) {
   return node.descendants().filter(d => !d.children).length;
 }
 
-const articles = (await FileAttachment("/data/articles.json").json());
-const NO_ISSUE_STRING = "Individual Articles";
-const groupedArticles = d3.group(articles, d => d.year, d => d.issue ? d.issue.name : NO_ISSUE_STRING);
-const articleHierarchy = {
-  name: "Articles",
-  children: [],
-};
-for (const [year, issues] of groupedArticles) {
-  if (!articleHierarchy.children.find(d => d.name === year)) {
-    articleHierarchy.children.push({name: year, children: []});
+export function createSunburst(articles) {
+  const NO_ISSUE_STRING = "Individual Articles";
+  const PALETTES = ["category12511021", "category12512022", "grouped12511007"];
+  const rangeURLs = PALETTES.map(p => palettes[p].rangeURLs).flat();
+
+  const groupedArticles = d3.group(articles, d => d.year, d => d.issue ? d.issue.name : NO_ISSUE_STRING);
+  const data = {
+    name: "Articles",
+    children: [],
+  };
+  for (const [year, issues] of groupedArticles) {
+    if (!data.children.find(d => d.name === year)) {
+      data.children.push({name: year, children: []});
+    }
+    for (const [issue, articles] of issues) {
+        if (issue === NO_ISSUE_STRING) {
+          data.children.find(d => d.name === year).children.push(...articles.map(a => ({...a, name: a.title, value: 1})));
+        } else {
+          data.children.find(d => d.name === year).children.push({name: issue, children: articles.map(a => ({...a, name: a.title, value: 1}))});
+        }
+    }
   }
-  for (const [issue, articles] of issues) {
-      if (issue === NO_ISSUE_STRING) {
-        articleHierarchy.children.find(d => d.name === year).children.push(...articles.map(a => ({...a, name: a.title, value: 1})));
-      } else {
-        articleHierarchy.children.find(d => d.name === year).children.push({name: issue, children: articles.map(a => ({...a, name: a.title, value: 1}))});
-      }
-  }
-}
-
-const PALETTES = ["category12511021", "category12512022", "grouped12511007"];
-
-const rangeURLs = PALETTES.map(p => palettes[p].rangeURLs).flat();
-
-function createSunburst(data) {
     // Specify the chart’s dimensions.
     const width = 928;
     const height = width + 100;
@@ -276,5 +271,3 @@ function createSunburst(data) {
   
     return svg.node();
 }
-
-export const sunburst = createSunburst(articleHierarchy);
