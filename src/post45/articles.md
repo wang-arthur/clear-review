@@ -8,8 +8,8 @@ import {FileAttachment} from "observablehq:stdlib";
 const articles = await FileAttachment("/data/articles.json").json();
 ```
 
-## Articles by year (Sunburst)
-<div class="card sunburst-card">${display(createSunburst(articles))}</div>
-
 ## Articles by year (Bars)
 <div class="card bars-card">${display(createBarChart(articles))}</div>
+
+## Articles by year (Sunburst)
+<div class="card sunburst-card">${display(createSunburst(articles))}</div>

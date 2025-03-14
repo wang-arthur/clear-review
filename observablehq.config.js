@@ -23,7 +23,9 @@ export default {
   ],
 
   // Content to add to the head of the page, e.g. for a favicon:
-  head: '<link rel="icon" href="images/noun-open-book-7606344.svg" type="image/png" sizes="32x32">',
+  head: '<link rel="icon" href="images/noun-open-book-7606344.svg" type="image/png" sizes="32x32">' + 
+        // temporary approach to add tailwindcss
+        '<script src="https://unpkg.com/@tailwindcss/browser@4"></script>',
 
   // The path to the source root.
   root: "src",
