@@ -31,7 +31,7 @@ export default {
   root: "src",
 
   // Some additional configuration options and their defaults:
-  theme: "air", // try "light", "dark", "slate", etc.
+  theme: "parchment", // try "light", "dark", "slate", etc.
   // header: "", // what to show in the header (HTML)
   footer: '<a href="https://arthurzwang.com">Arthur Z. Wang</a>',
   // sidebar: true, // whether to show the sidebar
