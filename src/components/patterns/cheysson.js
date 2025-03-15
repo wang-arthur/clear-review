@@ -11,6 +11,7 @@ https://observablehq.com/@tomshanley/cheysson-color-palettes
 */
 
 import {FileAttachment} from "observablehq:stdlib";
+import * as d3 from "npm:d3";
 
 export const palettes = {
   diverging12541021: {
@@ -540,4 +541,29 @@ export function renderPatterns(selectedPatterns) {
   });
   
   return fragment;
+}
+
+export function applySvgPatternAsBg(patternString, element) {
+  const patternID = patternString.match(/id="([^"]+)"/)[1];
+  // Create an SVG wrapper for the pattern
+  const svgWrapper = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+          <defs>${patternString}</defs>
+          <rect width="100%" height="100%" fill="url(#${patternID})"></rect>
+      </svg>
+  `;
+
+  // 2️⃣ Encode the SVG for a data URL
+  const encodedSvg = encodeURIComponent(svgWrapper)
+      .replace(/'/g, "%27")
+      .replace(/"/g, "%22");
+
+  // 3️⃣ Construct the data URL
+  const dataUrl = `data:image/svg+xml,${encodedSvg}`;
+
+  // 4️⃣ Apply the pattern as a CSS background
+  element
+      .style("background-image", `url("${dataUrl}")`)
+      .style("background-size", "100px 100px")
+      .style("background-repeat", "repeat");
 }
