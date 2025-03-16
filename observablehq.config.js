@@ -8,6 +8,12 @@ export default {
   // lets you organize them into sections and have unlisted pages.
   pages: [
     {
+      name: "Peer Review",
+      pages: [
+        {name: "Process Diagram", path: "/peer-review/process"},
+      ]
+    },
+    {
       name: "Post45",
       pages: [
         {name: "Articles", path: "/post45/articles"},
