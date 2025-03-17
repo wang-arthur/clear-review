@@ -9,6 +9,7 @@ export function wrap(input, width) {
     let text = d3.select(this);
     // Create a dummy text plot to handle wrapping
     // inefficient hack, but fine for small number of text elements
+    // replace with something more robust: https://github.com/observablehq/plot/blob/main/src/marks/text.js#L267
     let textPlot = Plot.text([text.text()], {
       lineWidth: width,
       lineHeight: 1.15,
