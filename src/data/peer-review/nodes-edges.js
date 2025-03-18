@@ -1,12 +1,13 @@
 import { MarkerType } from 'npm:@xyflow/react';
 
-const COLORS = {
+export const COLORS = {
   green:  "#009E0F",
   red:    "#ED4448",
   yellow: "#FFC300",
   blue:   "#00A2FF",
   purple: "#DF9CCC",
-
+  light_gray: "#F2F2F2",
+  pale_lilac: "#C1CADF",
 };
 
 const peopleGroups = {
