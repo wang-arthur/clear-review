@@ -4,8 +4,27 @@
 
 ```jsx
 import * as React from 'npm:react';
-import { ReactFlow, applyEdgeChanges, applyNodeChanges, Background } from 'npm:@xyflow/react';
-import { initialNodes, initialEdges } from '/data/peer-review/nodes-edges.js';
+import { ReactFlow, applyEdgeChanges, applyNodeChanges, Background, MiniMap, Controls } from 'npm:@xyflow/react';
+import { initialNodes, initialEdges, COLORS } from '/data/peer-review/nodes-edges.js';
+
+const nodeColor = (node) => {
+
+  switch (node.id) {
+    case 'accept':
+      return COLORS.green;
+    case 'reject':
+      return COLORS.red;
+    case 'withdraw':
+      return COLORS.blue;
+  }
+
+  switch (node.type) {
+    case 'group':
+        return COLORS.light_gray;
+    default:
+      return COLORS.pale_lilac;
+  }
+};
 
 function PeerReviewDiagram() {
   const [nodes, setNodes] = React.useState(initialNodes);
@@ -21,13 +40,16 @@ function PeerReviewDiagram() {
   );
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}> 
+    <div className="border border-1"
+      style={{ width: '70vw', height: '70vh' }}> 
       <ReactFlow
         nodes={nodes}
         onNodesChange={onNodesChange}
         edges={edges}
         onEdgesChange={onEdgesChange}
         fitView>
+        <MiniMap nodeColor={nodeColor} nodeStrokeWidth={5} zoomable panable />
+        <Controls />
         <Background />
       </ReactFlow>
     </div>
